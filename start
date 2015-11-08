@@ -36,12 +36,13 @@ fi
 
 if [ ! -e /syncthing/syncthing ]; then
   cd /
-  wget -O /syncthing.tar.gz https://github.com/syncthing/syncthing/releases/download/v${VERSION}/syncthing-linux-amd64-v${VERSION}.tar.gz && \
+  wget --no-check-certificate -O /syncthing.tar.gz https://github.com/syncthing/syncthing/releases/download/v${VERSION}/syncthing-linux-amd64-v${VERSION}.tar.gz && \
   tar xvf /syncthing.tar.gz && \
   mv /syncthing-linux-amd64-v${VERSION}/syncthing /syncthing/syncthing
 fi
-groupadd --gid $USER_GID syncthing
-useradd -d /Sync -m syncthing --uid $USER_UID --gid $USER_GID --shell /bin/bash
+
+addgroup -g $USER_GID syncthing
+adduser -h /Sync -u $USER_UID -D -G syncthing -s /bin/bash syncthing
 /syncthing/syncthing -upgrade
 chown -R syncthing:syncthing /Sync /Config /syncthing
-exec su -c "exec /syncthing/syncthing -home /Config -gui-address=https://0.0.0.0:8080 -no-browser" syncthing
+exec su -c "exec /syncthing/syncthing -home /Config -gui-address=https://0.0.0.0:8384 -no-browser" syncthing
